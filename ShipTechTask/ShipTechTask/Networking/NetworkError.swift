@@ -6,6 +6,7 @@ enum NetworkError: Error {
     case decodingFailed(Error)
     case encodingFailed(Error)
     case notFound
+    case unauthorized
     case internalServerError
     case unknownError(statusCode: Int)
 }
