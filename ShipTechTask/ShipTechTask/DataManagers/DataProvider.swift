@@ -2,25 +2,18 @@ final class DataProvider {
     private let networkService: ShipsNetworkService
     private let dataStore: LocalStorageManager
     private let connectionChecker: ConnectionChecker
-    private let authProvider: AuthenticationProvider
 
     init(
         networkService: ShipsNetworkService,
         dataStore: LocalStorageManager,
-        connectionChecker: ConnectionChecker,
-        authProvider: AuthenticationProvider
+        connectionChecker: ConnectionChecker
     ) {
         self.networkService = networkService
         self.dataStore = dataStore
         self.connectionChecker = connectionChecker
-        self.authProvider = authProvider
     }
 
     func fetchShips(refreshFromAPI: Bool = false) async throws -> [Ship] {
-        guard authProvider.isUserLoggedIn else {
-            throw NetworkError.unauthorized
-        }
-
         if refreshFromAPI || connectionChecker.isConnected {
             let apiShips = try await networkService.fetchShips()
             let storedShips = try await dataStore.fetchShips()
@@ -39,10 +32,6 @@ final class DataProvider {
     }
 
     func fetchShip(by id: String) async throws -> Ship {
-        guard authProvider.isUserLoggedIn else {
-            throw NetworkError.unauthorized
-        }
-
         if connectionChecker.isConnected {
             let apiShip = try await networkService.fetchShip(by: id)
             try await dataStore.saveShips([apiShip])
@@ -56,10 +45,6 @@ final class DataProvider {
     }
 
     func deleteShip(by id: String) async throws {
-        guard authProvider.isUserLoggedIn else {
-            throw NetworkError.unauthorized
-        }
-
         try await dataStore.deleteShip(by: id)
     }
  }
