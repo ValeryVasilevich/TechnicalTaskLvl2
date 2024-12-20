@@ -9,12 +9,14 @@ final class NetworkChecker: ConnectionChecker {
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "ConnectionCheckerQueue")
 
-    let isConnectedPublisher = CurrentValueSubject<Bool, Never>(false)
-    var isConnected: Bool { isConnectedPublisher.value }
+    private let _isConnectedPublisher = CurrentValueSubject<Bool, Never>(false)
+    private(set) lazy var isConnectedPublisher: AnyPublisher<Bool, Never> = _isConnectedPublisher.eraseToAnyPublisher()
+
+    var isConnected: Bool { _isConnectedPublisher.value }
 
     init() {
         monitor.pathUpdateHandler = { [weak self] path in
-            self?.isConnectedPublisher.send(path.status == .satisfied)
+            self?._isConnectedPublisher.send(path.status == .satisfied)
         }
         monitor.start(queue: queue)
     }
