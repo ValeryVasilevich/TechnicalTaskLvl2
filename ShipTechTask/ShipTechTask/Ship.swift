@@ -12,4 +12,12 @@ struct Ship: Decodable {
         case type
         case year = "year_built"
     }
+
+    init(entity: ShipEntity) {
+        self.id = entity.id ?? ""
+        self.name = entity.name ?? ""
+        self.image = entity.image
+        self.type = entity.type ?? ""
+        self.year = entity.year == 0 ? nil : Int(entity.year)
+    }
 }

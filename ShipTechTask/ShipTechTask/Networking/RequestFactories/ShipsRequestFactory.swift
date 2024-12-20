@@ -2,7 +2,7 @@ import Foundation
 
 struct ShipsRequestFactory: NetworkRequestFactory {
     var baseURL: URL {
-        return URL(string: "https://api.spacexdata.com")!
+        return URL(string: AppConstants.domain)!
     }
 
     func getShips() throws -> URLRequest {

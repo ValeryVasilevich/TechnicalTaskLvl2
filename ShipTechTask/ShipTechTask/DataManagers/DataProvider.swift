@@ -1,4 +1,4 @@
-final class DataCoordinator {
+final class DataProvider {
     private let networkService: ShipsNetworkService
     private let dataStore: LocalStorageManager
     private let connectionChecker: ConnectionChecker
@@ -16,17 +16,25 @@ final class DataCoordinator {
         self.authProvider = authProvider
     }
 
-    func fetchShips() async throws -> [Ship] {
+    func fetchShips(refreshFromAPI: Bool = false) async throws -> [Ship] {
         guard authProvider.isUserLoggedIn else {
             throw NetworkError.unauthorized
         }
 
-        if connectionChecker.isConnected {
+        if refreshFromAPI || connectionChecker.isConnected {
             let apiShips = try await networkService.fetchShips()
-            try dataStore.saveShips(apiShips)
+            let storedShips = try await dataStore.fetchShips()
+            let newShips = apiShips.filter { apiShip in
+                !storedShips.contains { storedShip in
+                    storedShip.id == apiShip.id
+                }
+            }
+            if !newShips.isEmpty {
+                try await dataStore.saveShips(apiShips)
+            }
             return apiShips
         } else {
-            return try dataStore.fetchShips()
+            return try await dataStore.fetchShips()
         }
     }
 
@@ -37,13 +45,21 @@ final class DataCoordinator {
 
         if connectionChecker.isConnected {
             let apiShip = try await networkService.fetchShip(by: id)
-            try dataStore.updateShip(apiShip)
+            try await dataStore.saveShips([apiShip])
             return apiShip
         } else {
-            guard let localShip = try dataStore.fetchShip(by: id) else {
+            guard let localShip = try await dataStore.fetchShip(by: id) else {
                 throw NetworkError.dataNotFound
             }
             return localShip
         }
     }
-}
+
+    func deleteShip(by id: String) async throws {
+        guard authProvider.isUserLoggedIn else {
+            throw NetworkError.unauthorized
+        }
+
+        try await dataStore.deleteShip(by: id)
+    }
+ }
