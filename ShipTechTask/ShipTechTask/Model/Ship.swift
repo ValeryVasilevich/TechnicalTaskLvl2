@@ -22,4 +22,9 @@ struct Ship: Decodable {
         self.type = entity.type
         self.dateBuild = entity.dateBuild
     }
+
+    var builtYear: String? {
+        guard let dateBuild = dateBuild else { return nil }
+        return DateFormatterService.shared.formatYear(from: dateBuild)
+    }
 }
