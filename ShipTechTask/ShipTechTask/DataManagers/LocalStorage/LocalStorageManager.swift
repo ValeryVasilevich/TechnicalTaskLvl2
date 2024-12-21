@@ -10,31 +10,44 @@ protocol LocalStorageManager {
 final class ShipsStorageManager: LocalStorageManager {
     static let shared = ShipsStorageManager()
 
-    // MARK: - Core Data stack
+    // MARK: - Properties
 
-    lazy var persistentContainer: NSPersistentContainer = {
+    private let persistentContainer: NSPersistentContainer
+    private var context: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+
+    // MARK: - Initializer
+
+    init(storeType: String = NSSQLiteStoreType) {
+        self.persistentContainer = ShipsStorageManager.setupPersistentContainer(storeType: storeType)
+    }
+
+    // MARK: - Core Data Setup
+
+    private static func setupPersistentContainer(storeType: String) -> NSPersistentContainer {
         let container = NSPersistentContainer(name: "ShipTechTask")
+        let description = NSPersistentStoreDescription()
+        description.type = storeType
+
+        container.persistentStoreDescriptions = [description]
         container.loadPersistentStores { _, error in
             guard let error else { return }
-            self.handleCoreDataError(error)
+            fatalError("Failed to load persistent stores: \(error)")
         }
-        return container
-    }()
 
-    private var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
+        return container
     }
 
     // MARK: - Core Data Saving support
 
     func saveContext() {
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nserror = error as NSError
-                self.handleCoreDataError(nserror)
-            }
+        guard context.hasChanges else { return }
+
+        do {
+            try context.save()
+        } catch {
+            fatalError("Unresolved error \(error)")
         }
     }
 
@@ -42,8 +55,7 @@ final class ShipsStorageManager: LocalStorageManager {
 
     func fetchShips() async throws -> [Ship] {
         let fetchRequest: NSFetchRequest<ShipEntity> = ShipEntity.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ShipEntity.name), ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ShipEntity.name), ascending: true)]
 
         let entities = try context.fetch(fetchRequest)
         return entities.map { Ship(entity: $0) }
@@ -60,21 +72,21 @@ final class ShipsStorageManager: LocalStorageManager {
         return Ship(entity: entity)
     }
 
-
     func saveShips(_ ships: [Ship]) async throws {
         let fetchRequest: NSFetchRequest<ShipEntity> = ShipEntity.fetchRequest()
         let existingEntities = try context.fetch(fetchRequest)
 
-        var existingEntitiesDict = Dictionary(uniqueKeysWithValues: existingEntities.map { ($0.id ?? "", $0) })
+        var existingEntitiesDictionary = Dictionary(uniqueKeysWithValues: existingEntities.map { ($0.id, $0) })
 
         for ship in ships {
-            let entity = existingEntitiesDict[ship.id] ?? ShipEntity(context: context)
-            entity.update(from: ship)
-            existingEntitiesDict.removeValue(forKey: ship.id)
-        }
-
-        for (_, entity) in existingEntitiesDict {
-            context.delete(entity)
+            if let existingEntity = existingEntitiesDictionary[ship.id] {
+                existingEntity.name = ship.name
+                existingEntity.image = ship.image
+                existingEntity.type = ship.type
+                existingEntity.dateBuild = ship.dateBuild
+            } else {
+                ShipEntity(context: context, with: ship)
+            }
         }
 
         saveContext()
@@ -90,14 +102,5 @@ final class ShipsStorageManager: LocalStorageManager {
         }
 
         saveContext()
-    }
-}
-
-// MARK: - Core Data Error Handling
-
-private extension ShipsStorageManager {
-    func handleCoreDataError(_ error: Error) {
-        print("Core Data error: \(error.localizedDescription)")
-        throw AppError.failedToLoadPersistentStores(error.localizedDescription)
     }
 }
