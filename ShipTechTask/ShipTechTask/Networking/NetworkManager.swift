@@ -6,7 +6,7 @@ struct NetworkManager {
 
     func performRequest<T: Decodable>(_ request: URLRequest, decodeTo type: T.Type) async throws -> T {
         let (data, response) = try await session.data(for: request)
-        try processResponse(response: response)
+        try processResponse(response)
 
         return try decodeData(data: data, type: T.self)
     }
@@ -20,7 +20,7 @@ struct NetworkManager {
         }
     }
 
-    private func processResponse(response: URLResponse?) throws {
+    private func processResponse(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
         }
