@@ -87,15 +87,14 @@ final class ShipListViewController: UIViewController {
 
 extension ShipListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.ships.count
+        viewModel.ships.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ShipTableViewCell.identifier, for: indexPath) as? ShipTableViewCell else {
-            return UITableViewCell()
-        }
+        let cell: ShipTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         let ship = viewModel.ships[indexPath.row]
         cell.configure(with: ship)
+
         return cell
     }
 
