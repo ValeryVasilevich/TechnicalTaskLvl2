@@ -5,10 +5,26 @@ final class ShipListViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let tableView = UITableView()
-    private let offlineBanner = UILabel()
     private let viewModel: ShipListViewModel
     private var cancellables: Set<AnyCancellable> = []
+
+    private lazy var shipsTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(cellClass: ShipTableViewCell.self)
+    }()
+
+    private let offlineBanner: UILabel = {
+        let label = UILabel()
+        label.text = "No internet connection. You're in Offline mode"
+        label.textAlignment = .center
+        label.backgroundColor = .systemRed
+        label.textColor = .white
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+    }()
 
     // MARK: - Initializer
 
@@ -22,11 +38,15 @@ final class ShipListViewController: UIViewController {
     }
 
     // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindViewModel()
-        viewModel.fetchShips()
+        setupBindings()
+
+        Task {
+            await viewModel.fetchShips()
+        }
     }
 
     // MARK: - UI Setup
@@ -35,20 +55,11 @@ final class ShipListViewController: UIViewController {
         title = "Ships"
         view.backgroundColor = .systemBackground
 
-        // TableView
-        tableView.register(ShipTableViewCell.self, forCellReuseIdentifier: ShipTableViewCell.identifier)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tableView)
+        setupLayout()
+    }
 
-        // Offline Banner
-        offlineBanner.text = "No internet connection. You're in Offline mode"
-        offlineBanner.textAlignment = .center
-        offlineBanner.backgroundColor = .systemRed
-        offlineBanner.textColor = .white
-        offlineBanner.isHidden = true
-        offlineBanner.translatesAutoresizingMaskIntoConstraints = false
+    private func setupLayout() {
+        view.addSubview(shipsTableView)
         view.addSubview(offlineBanner)
 
         NSLayoutConstraint.activate([
@@ -57,20 +68,20 @@ final class ShipListViewController: UIViewController {
             offlineBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             offlineBanner.heightAnchor.constraint(equalToConstant: 44),
 
-            tableView.topAnchor.constraint(equalTo: offlineBanner.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            shipsTableView.topAnchor.constraint(equalTo: offlineBanner.bottomAnchor),
+            shipsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            shipsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            shipsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
     // MARK: - Bind ViewModel
 
-    private func bindViewModel() {
+    private func setupBindings() {
         viewModel.$ships
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self?.shipsTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
             }
             .store(in: &cancellables)
 
@@ -101,7 +112,9 @@ extension ShipListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let ship = viewModel.ships[indexPath.row]
-            viewModel.deleteShip(by: ship.id)
+            Task {
+                await viewModel.deleteShip(by: ship.id)
+            }
         }
     }
 }
