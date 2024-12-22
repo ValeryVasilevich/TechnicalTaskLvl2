@@ -11,6 +11,7 @@ final class LoginViewModel {
     @Published private(set) var isLoginButtonEnabled: Bool = false
 
     private let authenticationProvider: AuthenticationProvider
+    var didLoginSucceeded: (() -> Void)?
 
     // MARK: - Initialization
 
@@ -23,8 +24,7 @@ final class LoginViewModel {
 
     private func bindInputs() {
         Publishers.CombineLatest($email, $password)
-            .map { [weak self] email, password in
-                guard let self else { return false }
+            .map { email, password in
                 return email.isValidEmail() && !password.isEmpty
             }
             .assign(to: &$isLoginButtonEnabled)
@@ -33,10 +33,9 @@ final class LoginViewModel {
     func login() -> AnyPublisher<Bool, Never> {
         isLoading = true
         return authenticationProvider.login(email: email, password: password)
-            .handleEvents(receiveRequest:  { [weak self] _ in
+            .handleEvents(receiveCompletion: { [weak self] _ in
                 self?.isLoading = false
             })
-            .replaceError(with: false)
             .eraseToAnyPublisher()
     }
 }
