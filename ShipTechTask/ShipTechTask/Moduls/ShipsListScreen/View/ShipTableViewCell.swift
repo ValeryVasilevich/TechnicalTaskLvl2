@@ -1,7 +1,6 @@
 import UIKit
 
 final class ShipTableViewCell: UITableViewCell {
-    static let identifier = "ShipTableViewCell"
 
     // MARK: - UI Elements
 
