@@ -14,6 +14,8 @@ final class ShipListViewController: UIViewController {
         tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(cellClass: ShipTableViewCell.self)
+        tableView.refreshControl = refreshControl
+        return tableView
     }()
 
     private let offlineBanner: UILabel = {
@@ -24,6 +26,13 @@ final class ShipListViewController: UIViewController {
         label.textColor = .white
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return refreshControl
     }()
 
     // MARK: - Initializer
@@ -82,6 +91,7 @@ final class ShipListViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.shipsTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self?.refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
 
@@ -91,6 +101,14 @@ final class ShipListViewController: UIViewController {
                 self?.offlineBanner.isHidden = !isOffline
             }
             .store(in: &cancellables)
+    }
+
+    // MARK: - Actions
+
+    @objc private func refreshData() {
+        Task {
+            await viewModel.fetchShips()
+        }
     }
 }
 
