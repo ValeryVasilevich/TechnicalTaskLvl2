@@ -23,7 +23,7 @@ extension Publishers {
         }
     }
 
-    class TextFieldSubscription<S: Subscriber>: Subscription where S.Input == String, S.Failure == Never  {
+    final class TextFieldSubscription<S: Subscriber>: Subscription where S.Input == String, S.Failure == Never  {
 
         private var subscriber: S?
         private weak var textField: UITextField?

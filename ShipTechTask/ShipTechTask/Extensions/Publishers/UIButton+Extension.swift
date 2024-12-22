@@ -23,7 +23,7 @@ extension Publishers {
         }
     }
 
-    class ButtonSubscription<S: Subscriber>: Subscription where S.Input == Void, S.Failure == Never {
+    final class ButtonSubscription<S: Subscriber>: Subscription where S.Input == Void, S.Failure == Never {
 
         private var subscriber: S?
         private weak var button: UIButton?
