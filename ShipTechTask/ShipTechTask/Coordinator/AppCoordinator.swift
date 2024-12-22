@@ -9,9 +9,14 @@ final class AppCoordinator: Coordinator {
     var navigationController: UINavigationController
     private let window: UIWindow
 
-    init(window: UIWindow) {
+    private let authenticationProvider: AuthenticationProvider
+    private let dataProvider: DataProvider
+
+    init(window: UIWindow, authenticationProvider: AuthenticationProvider, dataProvider: DataProvider) {
         self.window = window
         self.navigationController = UINavigationController()
+        self.authenticationProvider = authenticationProvider
+        self.dataProvider = dataProvider
     }
 
     func start() {
@@ -21,26 +26,26 @@ final class AppCoordinator: Coordinator {
     }
 
     private func showLogin() {
-        let authenticationProvider = DefaultAuthenticationProvider()
         let loginViewModel = LoginViewModel(authenticationProvider: authenticationProvider)
         let loginViewController = LoginViewController(viewModel: loginViewModel)
-        loginViewModel.didLogin = { [weak self] in
+        loginViewModel.didLoginSucceeded = { [weak self] in
             self?.showShipsList()
         }
         navigationController.setViewControllers([loginViewController], animated: false)
     }
 
     private func showShipsList() {
-        let networkService = ShipsNetworkService()
-        let dataStore = ShipsStorageManager.shared
-        let connectionChecker = NetworkChecker()
-        let dataProvider = DataProvider(
-            networkService: networkService,
-            dataStore: dataStore,
-            connectionChecker: connectionChecker
-        )
         let shipsListViewModel = ShipsListViewModel(dataProvider: dataProvider)
         let shipsListViewController = ShipListViewController(viewModel: shipsListViewModel)
+//        shipsListViewModel.didSelectShip = { [weak self] ship in
+//            self?.showShipDetails(for: ship)
+//        }
         navigationController.pushViewController(shipsListViewController, animated: true)
+    }
+
+    private func showShipDetails(for ship: Ship) {
+        let shipDetailsViewModel = ShipDetailsViewModel(dataProvider: dataProvider)
+        let shipDetailsViewController = ShipDetailsViewController(viewModel: shipDetailsViewModel)
+        navigationController.present(shipDetailsViewController, animated: true, completion: nil)
     }
 }
