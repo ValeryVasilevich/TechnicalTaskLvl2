@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-final class ShipListViewModel {
+final class ShipsListViewModel {
 
     // MARK: - Properties
 

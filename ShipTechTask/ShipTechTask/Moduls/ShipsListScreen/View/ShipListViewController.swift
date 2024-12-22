@@ -5,7 +5,7 @@ final class ShipListViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let viewModel: ShipListViewModel
+    private let viewModel: ShipsListViewModel
     private var cancellables: Set<AnyCancellable> = []
 
     private lazy var shipsTableView: UITableView = {
@@ -37,7 +37,7 @@ final class ShipListViewController: UIViewController {
 
     // MARK: - Initializer
 
-    init(viewModel: ShipListViewModel) {
+    init(viewModel: ShipsListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
