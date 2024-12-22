@@ -6,12 +6,8 @@ fileprivate enum Constants {
     static let passwordPlaceholder = "Password"
     static let loginButtonTitle = "Login"
     static let loginGuestButtonTitle = "Login as a guest"
-    static let successAlertTitle = "Success"
     static let errorAlertTitle = "Error"
-    static let guestAlertTitle = "Guest"
-    static let successAlertMessage = "Logged in successfully!"
     static let errorAlertMessage = "Invalid email or password."
-    static let guestAlertMessage = "Welcome, guest user!"
 
     static let stackViewInsets = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
     static let stackViewSpacing: CGFloat = 16.0
@@ -138,7 +134,7 @@ final class LoginViewController: UIViewController {
             .store(in: &cancellables)
 
         guestButton.publisher
-            .sink { [weak self] in self?.showGuestWelcome() }
+            .sink { [weak self] in self?.viewModel.didLoginSucceeded?() }
             .store(in: &cancellables)
 
         viewModel.$isLoading
@@ -154,22 +150,14 @@ final class LoginViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] success in
                 switch success {
-                case true: self?.showMainApp()
+                case true: self?.viewModel.didLoginSucceeded?()
                 case false: self?.showErrorAlert()
                 }
             }
             .store(in: &cancellables)
     }
 
-    private func showMainApp() {
-        presentAlert(title: Constants.successAlertTitle, message: Constants.successAlertMessage)
-    }
-
     private func showErrorAlert() {
         presentAlert(title: Constants.errorAlertTitle, message: Constants.errorAlertMessage)
-    }
-
-    private func showGuestWelcome() {
-        presentAlert(title: Constants.guestAlertTitle, message: Constants.guestAlertMessage)
     }
 }
