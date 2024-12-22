@@ -2,20 +2,9 @@ import Foundation
 import CoreData
 
 @objc(ShipEntity)
-public class ShipEntity: NSManagedObject {}
+public final class ShipEntity: NSManagedObject {}
 
 extension ShipEntity {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<ShipEntity> {
-        NSFetchRequest<ShipEntity>(entityName: "ShipEntity")
-    }
-
-    @NSManaged public var id: String
-    @NSManaged public var name: String
-    @NSManaged public var image: String?
-    @NSManaged public var type: String
-    @NSManaged public var dateBuild: Date?
-
     convenience init(context: NSManagedObjectContext, with ship: Ship) {
         self.init(context: context)
         id = ship.id
@@ -26,4 +15,15 @@ extension ShipEntity {
     }
 }
 
-extension ShipEntity : Identifiable {}
+public extension ShipEntity {
+
+    @nonobjc final class func fetchRequest() -> NSFetchRequest<ShipEntity> {
+        NSFetchRequest<ShipEntity>(entityName: "ShipEntity")
+    }
+
+    @NSManaged var id: String
+    @NSManaged var name: String
+    @NSManaged var image: String?
+    @NSManaged var type: String
+    @NSManaged var dateBuild: Date?
+}
