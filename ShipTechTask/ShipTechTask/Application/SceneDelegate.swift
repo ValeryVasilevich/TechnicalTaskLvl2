@@ -10,11 +10,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
 
-        let diContainer = DependencyFactory(window: window)
+        let container = DependencyFactory(window: window)
 
-        let appCoordinator = diContainer.makeAppCoordinator(
-            authenticationProvider: diContainer.makeAuthenticationProvider(),
-            dataProvider: diContainer.makeDataProvider()
+        let authenticationProvider = container.makeAuthenticationProvider()
+        let dataProvider = container.makeDataProvider()
+
+        let appCoordinator = container.makeAppCoordinator(
+            authenticationProvider: authenticationProvider,
+            dataProvider: dataProvider
         )
 
         self.appCoordinator = appCoordinator
