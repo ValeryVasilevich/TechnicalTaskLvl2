@@ -1,6 +1,15 @@
 import Combine
 import Foundation
 
+fileprivate enum Constants {
+    static let errorMessage = "Failed to fetch details of ship."
+    static let namePrefix = "Ship name: "
+    static let typePrefix = "Ship type: "
+    static let builtYearPrefix = "Built year: "
+    static let weightSuffix = " kg"
+    static let homePortPrefix = "Home port: "
+}
+
 final class ShipDetailsViewModel {
 
     // MARK: - Properties
@@ -36,23 +45,24 @@ final class ShipDetailsViewModel {
         do {
             ship = try await dataProvider.fetchShip(by: id)
         } catch {
-            errorMessage = "Failed to fetch details of ship."
+            errorMessage = Constants.errorMessage
         }
     }
 
     private func updateFormattedDetails() {
-        guard let ship = ship else {
+        guard let ship else {
             formattedShipDetails = nil
             return
         }
 
         formattedShipDetails = ShipDetailsFormatted(
-            name: "Ship name: \(ship.name)",
-            type: "Ship type: \(ship.type)",
-            builtYear: "Built year: \(ship.builtYear)",
-            weight: "Weight: \(ship.weight ?? 0) kg",
-            homePort: "Home port: \(ship.homePort ?? "N/A")",
-            roles: ship.roles ?? ["N/A"]
+            name: "\(Constants.namePrefix)\(ship.name)",
+            type: "\(Constants.typePrefix)\(ship.type)",
+            image: ship.image ?? "",
+            builtYear: "\(Constants.builtYearPrefix)\(ship.builtYear)",
+            weight: "\(ship.weight ?? 0)\(Constants.weightSuffix)",
+            homePort: "\(Constants.homePortPrefix)\(ship.homePort ?? "")",
+            roles: ship.roles ?? [""]
         )
     }
 }
