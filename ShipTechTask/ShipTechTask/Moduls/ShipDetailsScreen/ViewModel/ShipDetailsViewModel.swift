@@ -21,14 +21,18 @@ final class ShipDetailsViewModel {
 
     init(dataProvider: DataProvider, shipId: String) {
         self.dataProvider = dataProvider
+        loadInitialData(by: shipId)
+    }
+
+    private func loadInitialData(by id: String) {
         Task {
-            await fetchShip(by: shipId)
+            await fetchShip(by: id)
         }
     }
 
     // MARK: - Fetch Ship
 
-    func fetchShip(by id: String) async {
+    private func fetchShip(by id: String) async {
         do {
             ship = try await dataProvider.fetchShip(by: id)
         } catch {
