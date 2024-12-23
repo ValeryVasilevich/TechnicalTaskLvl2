@@ -119,7 +119,6 @@ final class ShipListViewController: UIViewController {
     @objc private func refreshData() {
         Task {
             await viewModel.fetchShips()
-            viewModel.checkConnectionStatus()
         }
     }
 }
