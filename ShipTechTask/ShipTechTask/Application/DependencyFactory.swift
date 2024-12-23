@@ -25,8 +25,8 @@ struct DependencyFactory {
         NetworkChecker()
     }
 
-    func makeDataProvider() -> DataProvider {
-        DataProvider(
+    func makeDataProvider() -> ShipDataProvider {
+        ShipDataProvider(
             networkService: makeNetworkService(),
             dataStore: makeDataStore(),
             connectionChecker: makeConnectionChecker()
@@ -35,7 +35,7 @@ struct DependencyFactory {
 
     func makeAppCoordinator(
         authenticationProvider: AuthenticationProvider,
-        dataProvider: DataProvider
+        dataProvider: ShipDataProvider
     ) -> AppCoordinator {
         AppCoordinator(
             window: window,

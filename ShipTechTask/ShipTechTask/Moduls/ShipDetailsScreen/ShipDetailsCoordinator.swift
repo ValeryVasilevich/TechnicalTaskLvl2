@@ -3,10 +3,10 @@ import UIKit
 final class ShipDetailsCoordinator: Coordinator {
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
-    private let dataProvider: DataProvider
+    private let dataProvider: ShipDataProvider
     private let shipId: String
 
-    init(navigationController: UINavigationController, dataProvider: DataProvider, shipId: String) {
+    init(navigationController: UINavigationController, dataProvider: ShipDataProvider, shipId: String) {
         self.navigationController = navigationController
         self.dataProvider = dataProvider
         self.shipId = shipId

@@ -25,11 +25,11 @@ final class ShipDetailsViewModel {
     @Published var isOfflineMode: Bool = false
     @Published var errorMessage: String?
 
-    private let dataProvider: DataProvider
+    private let dataProvider: ShipDataProvider
 
     // MARK: - Initializer
 
-    init(dataProvider: DataProvider, shipId: String) {
+    init(dataProvider: ShipDataProvider, shipId: String) {
         self.dataProvider = dataProvider
         loadInitialData(by: shipId)
     }

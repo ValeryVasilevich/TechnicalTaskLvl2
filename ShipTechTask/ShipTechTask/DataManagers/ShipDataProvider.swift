@@ -1,6 +1,6 @@
 import Combine
 
-struct DataProvider {
+struct ShipDataProvider {
     private let networkService: ShipsNetworkService
     private let dataStore: LocalStorageManager
     private let connectionChecker: ConnectionChecker

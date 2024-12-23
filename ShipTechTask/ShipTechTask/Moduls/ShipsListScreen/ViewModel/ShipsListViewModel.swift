@@ -9,14 +9,14 @@ final class ShipsListViewModel {
     @Published var isOfflineMode: Bool = false
     @Published var errorMessage: String?
 
-    private let dataProvider: DataProvider
+    private let dataProvider: ShipDataProvider
     private var cancellables = Set<AnyCancellable>()
 
     var didSelectShip: ((String) -> Void)?
 
     // MARK: - Initializer
 
-    init(dataProvider: DataProvider) {
+    init(dataProvider: ShipDataProvider) {
         self.dataProvider = dataProvider
 
         checkConnectionStatus()

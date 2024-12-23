@@ -6,9 +6,9 @@ final class AppCoordinator: Coordinator {
     private let window: UIWindow
 
     private let authenticationProvider: AuthenticationProvider
-    private let dataProvider: DataProvider
+    private let dataProvider: ShipDataProvider
 
-    init(window: UIWindow, authenticationProvider: AuthenticationProvider, dataProvider: DataProvider) {
+    init(window: UIWindow, authenticationProvider: AuthenticationProvider, dataProvider: ShipDataProvider) {
         self.window = window
         self.navigationController = UINavigationController()
         self.authenticationProvider = authenticationProvider
