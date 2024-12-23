@@ -2,6 +2,7 @@ import UIKit
 import Combine
 
 fileprivate enum Constants {
+    static let headerTitle = "WELCOME TO THE SHIPS INFORMATION PROJECT"
     static let emailPlaceholder = "Email"
     static let passwordPlaceholder = "Password"
     static let loginButtonTitle = "Login"
@@ -10,6 +11,7 @@ fileprivate enum Constants {
     static let errorAlertMessage = "Invalid email or password."
 
     static let stackViewInsets = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
+    static let welcomeLabelInsets = UIEdgeInsets(top: 20.0, left: 20.0, bottom: 20.0, right: 20.0)
     static let stackViewSpacing: CGFloat = 16.0
 }
 
@@ -19,6 +21,16 @@ final class LoginViewController: UIViewController {
 
     private let viewModel: LoginViewModel
     private var cancellables: Set<AnyCancellable> = []
+
+    private let welcomeLabel: UILabel = {
+        let label = UILabel()
+        label.text = Constants.headerTitle
+        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
 
     private let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -95,20 +107,20 @@ final class LoginViewController: UIViewController {
         stackView.addArrangedSubview(loginButton)
         stackView.addArrangedSubview(guestButton)
 
+        view.addSubview(welcomeLabel)
         view.addSubview(stackView)
         view.addSubview(activityIndicator)
 
         NSLayoutConstraint.activate([
+            welcomeLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.welcomeLabelInsets.top),
+            welcomeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.welcomeLabelInsets.left),
+            welcomeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.welcomeLabelInsets.right),
+
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            stackView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
-                constant: Constants.stackViewInsets.left
-            ),
-            stackView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
-                constant: -Constants.stackViewInsets.right
-            ),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.stackViewInsets.left),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.stackViewInsets.right),
+
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])

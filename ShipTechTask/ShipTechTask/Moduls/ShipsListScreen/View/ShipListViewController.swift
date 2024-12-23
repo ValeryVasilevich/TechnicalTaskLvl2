@@ -121,6 +121,8 @@ final class ShipListViewController: UIViewController {
             await viewModel.fetchShips()
         }
     }
+
+    // TODO: - add logic for presenting alert with a “Thank you for trialing this app” message when ‘guest’ press “Logout” button.
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
