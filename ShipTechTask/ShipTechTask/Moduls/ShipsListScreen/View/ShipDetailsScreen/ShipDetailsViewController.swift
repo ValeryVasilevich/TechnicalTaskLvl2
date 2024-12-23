@@ -7,8 +7,12 @@ final class ShipDetailsViewController: UIViewController {
 
     fileprivate enum Constants {
         static let title = "Ship Details"
-        static let stackViewSpacing: CGFloat = 8
-        static let stackViewInsets: CGFloat = 16
+        static let errorAlertTitle = "Oops!"
+        static let roleTitle = "Role:"
+
+        static let stackViewSpacing: CGFloat = 8.0
+        static let stackViewInsets: CGFloat = 16.0
+        static let roleStackViewInsets: CGFloat = 4.0
     }
 
     // MARK: - Properties
@@ -25,7 +29,7 @@ final class ShipDetailsViewController: UIViewController {
     private lazy var rolesStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 4
+        stackView.spacing = Constants.roleStackViewInsets
         stackView.alignment = .leading
         return stackView
     }()
@@ -116,20 +120,19 @@ final class ShipDetailsViewController: UIViewController {
         rolesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         let roleTittleLabel = UILabel()
-        roleTittleLabel.text = "Role:"
+        roleTittleLabel.text = Constants.roleTitle
 
         rolesStackView.addArrangedSubview(roleTittleLabel)
         details.roles.forEach { role in
             let roleLabel = UILabel()
             roleLabel.text = role
-            roleLabel.font = UIFont.systemFont(ofSize: 16)
             rolesStackView.addArrangedSubview(roleLabel)
         }
     }
 
     private func showErrorAlert(with errorMessage: String) {
         presentAlert(
-            title: "Oops!",
+            title: Constants.errorAlertTitle,
             message: errorMessage
         )
     }
