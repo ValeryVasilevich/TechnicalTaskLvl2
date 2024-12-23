@@ -1,7 +1,15 @@
+import Combine
+
 struct DataProvider {
     private let networkService: ShipsNetworkService
     private let dataStore: LocalStorageManager
     private let connectionChecker: ConnectionChecker
+
+    private var connectionStatusSubject = CurrentValueSubject<Bool, Never>(true)
+
+    var connectionStatusPublisher: AnyPublisher<Bool, Never> {
+        return connectionStatusSubject.eraseToAnyPublisher()
+    }
 
     init(
         networkService: ShipsNetworkService,
@@ -13,7 +21,13 @@ struct DataProvider {
         self.connectionChecker = connectionChecker
     }
 
+    private func updateConnectionStatus() {
+        connectionStatusSubject.send(connectionChecker.isConnected)
+    }
+
     func fetchShips() async throws -> [Ship] {
+        updateConnectionStatus()
+
         if connectionChecker.isConnected {
             let apiShips = try await networkService.fetchShips()
             let storedShips = try await dataStore.fetchShips()
@@ -32,6 +46,8 @@ struct DataProvider {
     }
 
     func fetchShip(by id: String) async throws -> Ship {
+        updateConnectionStatus()
+        
         if connectionChecker.isConnected {
             let apiShip = try await networkService.fetchShip(by: id)
             try await dataStore.saveShips([apiShip])

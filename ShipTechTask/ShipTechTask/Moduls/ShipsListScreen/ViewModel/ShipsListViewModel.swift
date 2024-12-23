@@ -10,12 +10,25 @@ final class ShipsListViewModel {
     @Published var errorMessage: String?
 
     private let dataProvider: DataProvider
+    private var cancellables = Set<AnyCancellable>()
+
     var didSelectShip: ((String) -> Void)?
 
     // MARK: - Initializer
 
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
+
+        setupSubscription()
+    }
+
+    func setupSubscription() {
+        dataProvider.connectionStatusPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isConnected in
+                self?.isOfflineMode = !isConnected
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Fetch Ships
