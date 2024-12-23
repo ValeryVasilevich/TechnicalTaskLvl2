@@ -1,24 +1,33 @@
 import UIKit
 import Combine
 
+fileprivate enum Constants {
+    static let title = "Ship Details"
+    static let errorAlertTitle = "Oops!"
+    static let roleTitle = "Role:"
+
+    static let placeholderImage = UIImage(named: "placeholder")
+
+    static let stackViewSpacing: CGFloat = 8.0
+    static let stackViewInsets: CGFloat = 16.0
+    static let roleStackViewInsets: CGFloat = 4.0
+    static let imageHeight: CGFloat = 200.0
+}
+
 final class ShipDetailsViewController: UIViewController {
-
-    // MARK: - Constants
-
-    fileprivate enum Constants {
-        static let title = "Ship Details"
-        static let errorAlertTitle = "Oops!"
-        static let roleTitle = "Role:"
-
-        static let stackViewSpacing: CGFloat = 8.0
-        static let stackViewInsets: CGFloat = 16.0
-        static let roleStackViewInsets: CGFloat = 4.0
-    }
 
     // MARK: - Properties
 
     private let viewModel: ShipDetailsViewModel
     private var cancellables: Set<AnyCancellable> = []
+
+    private let shipImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
 
     private let nameLabel = UILabel()
     private let typeLabel = UILabel()
@@ -71,6 +80,7 @@ final class ShipDetailsViewController: UIViewController {
     }
 
     private func setupLayout() {
+        stackView.addArrangedSubview(shipImageView)
         stackView.addArrangedSubview(nameLabel)
         stackView.addArrangedSubview(typeLabel)
         stackView.addArrangedSubview(builtYearLabel)
@@ -83,7 +93,9 @@ final class ShipDetailsViewController: UIViewController {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.stackViewInsets),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.stackViewInsets),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.stackViewInsets)
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.stackViewInsets),
+
+            shipImageView.heightAnchor.constraint(equalToConstant: Constants.imageHeight)
         ])
     }
 
@@ -96,6 +108,7 @@ final class ShipDetailsViewController: UIViewController {
                 self?.updateShipDetails(formattedDetails)
             }
             .store(in: &cancellables)
+
         viewModel.$errorMessage
             .receive(on: DispatchQueue.main)
             .sink { [weak self] errorMessage in
@@ -104,7 +117,6 @@ final class ShipDetailsViewController: UIViewController {
             }
             .store(in: &cancellables)
     }
-
 
     // MARK: - Private Methods
 
@@ -116,18 +128,32 @@ final class ShipDetailsViewController: UIViewController {
         builtYearLabel.text = details.builtYear
         weightLabel.text = details.weight
         homePortLabel.text = details.homePort
+        loadShipImage(from: details.image)
 
+        updateRolesStackView(with: details.roles)
+    }
+
+    private func updateRolesStackView(with roles: [String]) {
         rolesStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        let roleTittleLabel = UILabel()
-        roleTittleLabel.text = Constants.roleTitle
+        let roleTitleLabel = UILabel()
+        roleTitleLabel.text = Constants.roleTitle
+        rolesStackView.addArrangedSubview(roleTitleLabel)
 
-        rolesStackView.addArrangedSubview(roleTittleLabel)
-        details.roles.forEach { role in
+        roles.forEach { role in
             let roleLabel = UILabel()
-            roleLabel.text = role
+            roleLabel.text = "- \(role)"
             rolesStackView.addArrangedSubview(roleLabel)
         }
+    }
+
+    private func loadShipImage(from imageUrlString: String?) {
+        guard let imageUrlString = imageUrlString, let url = URL(string: imageUrlString) else {
+            shipImageView.image = Constants.placeholderImage
+            return
+        }
+
+        shipImageView.loadImage(from: url)
     }
 
     private func showErrorAlert(with errorMessage: String) {
