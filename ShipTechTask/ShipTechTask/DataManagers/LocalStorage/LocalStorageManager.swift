@@ -33,7 +33,7 @@ final class ShipsStorageManager: LocalStorageManager {
         container.persistentStoreDescriptions = [description]
         container.loadPersistentStores { _, error in
             guard let error else { return }
-            fatalError("Failed to load persistent stores: \(error)")
+            print(">>> \(Data()) \(#line) \(#function) error \(error.localizedDescription)")
         }
 
         return container
@@ -47,7 +47,7 @@ final class ShipsStorageManager: LocalStorageManager {
         do {
             try context.save()
         } catch {
-            fatalError("Unresolved error \(error)")
+            print(">>> \(Data()) \(#line) \(#function) error \(error.localizedDescription)")
         }
     }
 

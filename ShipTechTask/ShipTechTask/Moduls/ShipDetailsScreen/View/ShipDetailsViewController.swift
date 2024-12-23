@@ -59,7 +59,7 @@ final class ShipDetailsViewController: UIViewController {
     }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented. Please use init(viewModel:)")
     }
 
     // MARK: - Lifecycle

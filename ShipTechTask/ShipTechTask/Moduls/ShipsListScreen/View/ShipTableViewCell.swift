@@ -60,7 +60,7 @@ final class ShipTableViewCell: UITableViewCell {
     }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented. Please use init(style:reuseIdentifier:)")
     }
 
     // MARK: - Setup UI
