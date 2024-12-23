@@ -76,7 +76,7 @@ final class ShipsStorageManager: LocalStorageManager {
         let fetchRequest: NSFetchRequest<ShipEntity> = ShipEntity.fetchRequest()
         let existingEntities = try context.fetch(fetchRequest)
 
-        var existingEntitiesDictionary = Dictionary(uniqueKeysWithValues: existingEntities.map { ($0.id, $0) })
+        let existingEntitiesDictionary = Dictionary(uniqueKeysWithValues: existingEntities.map { ($0.id, $0) })
 
         for ship in ships {
             if let existingEntity = existingEntitiesDictionary[ship.id] {
