@@ -19,10 +19,12 @@ final class ShipsListViewModel {
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
 
-        setupSubscription()
+        checkConnectionStatus()
     }
 
-    func setupSubscription() {
+    // MARK: - Fetch Ships
+
+    func checkConnectionStatus() {
         dataProvider.connectionStatusPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isConnected in
@@ -30,8 +32,6 @@ final class ShipsListViewModel {
             }
             .store(in: &cancellables)
     }
-
-    // MARK: - Fetch Ships
 
     func fetchShips() async {
         do {
