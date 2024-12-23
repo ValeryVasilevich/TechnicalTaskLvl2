@@ -59,9 +59,7 @@ final class ShipListViewController: UIViewController {
         setupUI()
         setupBindings()
 
-        Task {
-            await viewModel.fetchShips()
-        }
+        loadInitialData()
     }
 
     // MARK: - UI Setup
@@ -90,6 +88,12 @@ final class ShipListViewController: UIViewController {
         ])
     }
 
+    private func loadInitialData() {
+        Task {
+            await viewModel.fetchShips()
+        }
+    }
+
     // MARK: - Bind ViewModel
 
     private func setupBindings() {
@@ -115,6 +119,7 @@ final class ShipListViewController: UIViewController {
     @objc private func refreshData() {
         Task {
             await viewModel.fetchShips()
+            viewModel.checkConnectionStatus()
         }
     }
 }
