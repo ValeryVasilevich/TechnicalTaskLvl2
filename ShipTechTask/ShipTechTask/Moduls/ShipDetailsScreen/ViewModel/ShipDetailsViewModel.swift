@@ -6,7 +6,8 @@ fileprivate enum Constants {
     static let namePrefix = "Ship name: "
     static let typePrefix = "Ship type: "
     static let builtYearPrefix = "Built year: "
-    static let weightSuffix = " kg"
+    static let weightPrefix = "Weight:"
+    static let weightSuffix = "kg"
     static let homePortPrefix = "Home port: "
 }
 
@@ -60,7 +61,7 @@ final class ShipDetailsViewModel {
             type: "\(Constants.typePrefix)\(ship.type)",
             image: ship.image ?? "",
             builtYear: "\(Constants.builtYearPrefix)\(ship.builtYear)",
-            weight: "\(ship.weight ?? 0)\(Constants.weightSuffix)",
+            weight: "\(Constants.weightPrefix) \(ship.weight ?? 0) \(Constants.weightSuffix)",
             homePort: "\(Constants.homePortPrefix)\(ship.homePort ?? "")",
             roles: ship.roles ?? [""]
         )
