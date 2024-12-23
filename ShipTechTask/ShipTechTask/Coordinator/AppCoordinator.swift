@@ -1,11 +1,7 @@
 import UIKit
 
-protocol Coordinator {
-    var navigationController: UINavigationController { get set }
-    func start()
-}
-
 final class AppCoordinator: Coordinator {
+    var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
     private let window: UIWindow
 
@@ -20,32 +16,39 @@ final class AppCoordinator: Coordinator {
     }
 
     func start() {
-        showLogin()
+        let loginCoordinator = LoginCoordinator(
+            navigationController: navigationController,
+            authenticationProvider: authenticationProvider
+        )
+        loginCoordinator.finish = { [weak self] in
+            self?.showShipList()
+        }
+        addChild(loginCoordinator)
+        loginCoordinator.start()
+
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
     }
 
-    private func showLogin() {
-        let loginViewModel = LoginViewModel(authenticationProvider: authenticationProvider)
-        let loginViewController = LoginViewController(viewModel: loginViewModel)
-        loginViewModel.didLoginSucceeded = { [weak self] in
-            self?.showShipsList()
+    private func showShipList() {
+        let shipListCoordinator = ShipListCoordinator(
+            navigationController: navigationController,
+            dataProvider: dataProvider
+        )
+        shipListCoordinator.finish = { [weak self] in
+            self?.showShipDetails(with: $0)
         }
-        navigationController.setViewControllers([loginViewController], animated: false)
-    }
-
-    private func showShipsList() {
-        let shipsListViewModel = ShipsListViewModel(dataProvider: dataProvider)
-        let shipsListViewController = ShipListViewController(viewModel: shipsListViewModel)
-        shipsListViewModel.didSelectShip = { [weak self] id in
-            self?.showShipDetails(with: id)
-        }
-        navigationController.pushViewController(shipsListViewController, animated: true)
+        addChild(shipListCoordinator)
+        shipListCoordinator.start()
     }
 
     private func showShipDetails(with id: String) {
-        let shipDetailsViewModel = ShipDetailsViewModel(dataProvider: dataProvider, shipId: id)
-        let shipDetailsViewController = ShipDetailsViewController(viewModel: shipDetailsViewModel)
-        navigationController.present(shipDetailsViewController, animated: true, completion: nil)
+        let shipDetailsCoordinator = ShipDetailsCoordinator(
+            navigationController: navigationController,
+            dataProvider: dataProvider,
+            shipId: id
+        )
+        addChild(shipDetailsCoordinator)
+        shipDetailsCoordinator.start()
     }
 }
