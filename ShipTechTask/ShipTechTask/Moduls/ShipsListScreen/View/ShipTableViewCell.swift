@@ -82,6 +82,10 @@ final class ShipTableViewCell: UITableViewCell {
         shipNameLabel.text = ship.name
         shipTypeLabel.text = ship.type
         builtYearLabel.text = ship.builtYear
-        shipImageView.image = UIImage(named: "") // TODO: Replace with actual image logic
+        if let imageUrlString = ship.image, let url = URL(string: imageUrlString) {
+                shipImageView.loadImage(from: url)
+            } else {
+                shipImageView.image = UIImage(named: "placeholder")
+            }
     }
 }
