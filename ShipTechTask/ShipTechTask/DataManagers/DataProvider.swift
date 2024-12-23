@@ -13,8 +13,8 @@ struct DataProvider {
         self.connectionChecker = connectionChecker
     }
 
-    func fetchShips(refreshFromAPI: Bool = false) async throws -> [Ship] {
-        if refreshFromAPI || connectionChecker.isConnected {
+    func fetchShips() async throws -> [Ship] {
+        if connectionChecker.isConnected {
             let apiShips = try await networkService.fetchShips()
             let storedShips = try await dataStore.fetchShips()
             let newShips = apiShips.filter { apiShip in

@@ -22,7 +22,7 @@ final class ShipsListViewModel {
 
     func fetchShips() async {
         do {
-            let fetchedShips = try await dataProvider.fetchShips(refreshFromAPI: true)
+            let fetchedShips = try await dataProvider.fetchShips()
             ships = fetchedShips.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         } catch {
             errorMessage = "Failed to fetch ships."
