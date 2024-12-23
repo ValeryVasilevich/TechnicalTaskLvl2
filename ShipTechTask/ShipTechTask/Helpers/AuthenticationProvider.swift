@@ -9,21 +9,29 @@ fileprivate enum AuthConstants {
 }
 
 protocol AuthenticationProvider {
-    var isUserLoggedIn: Bool { get }
+    var authenticationStatusPublisher: AnyPublisher<Bool, Never> { get }
     func login(email: String, password: String) -> AnyPublisher<Bool, Never>
     func logout()
 }
 
 final class DefaultAuthenticationProvider: AuthenticationProvider {
     private let userDefaults = UserDefaults.standard
-    private(set) var isUserLoggedInPublisher = CurrentValueSubject<Bool, Never>(false)
+    private var authenticationStatusSubject = CurrentValueSubject<Bool, Never>(false)
 
-    var isUserLoggedIn: Bool {
-        userDefaults.string(forKey: AuthConstants.userTokenKey) != nil
+    var authenticationStatusPublisher: AnyPublisher<Bool, Never> {
+        return authenticationStatusSubject.eraseToAnyPublisher()
+    }
+
+    private var isUserLoggedIn: Bool {
+        return userDefaults.string(forKey: AuthConstants.userTokenKey) != nil
+    }
+
+    private func updateAuthenticationStatus() {
+        authenticationStatusSubject.send(isUserLoggedIn)
     }
 
     init() {
-        isUserLoggedInPublisher.send(isUserLoggedIn)
+        updateAuthenticationStatus()
     }
 
     func login(email: String, password: String) -> AnyPublisher<Bool, Never> {
@@ -32,7 +40,7 @@ final class DefaultAuthenticationProvider: AuthenticationProvider {
                 let success = email == AuthConstants.email && password == AuthConstants.password
                 if success {
                     self.userDefaults.set(UUID().uuidString, forKey: AuthConstants.userTokenKey)
-                    self.isUserLoggedInPublisher.send(true)
+                    self.updateAuthenticationStatus()
                 }
                 promise(.success(success))
             }
@@ -42,6 +50,6 @@ final class DefaultAuthenticationProvider: AuthenticationProvider {
 
     func logout() {
         userDefaults.removeObject(forKey: AuthConstants.userTokenKey)
-        isUserLoggedInPublisher.send(false)
+        updateAuthenticationStatus()
     }
 }
