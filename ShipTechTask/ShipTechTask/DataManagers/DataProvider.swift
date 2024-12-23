@@ -1,4 +1,4 @@
-final class DataProvider {
+struct DataProvider {
     private let networkService: ShipsNetworkService
     private let dataStore: LocalStorageManager
     private let connectionChecker: ConnectionChecker
