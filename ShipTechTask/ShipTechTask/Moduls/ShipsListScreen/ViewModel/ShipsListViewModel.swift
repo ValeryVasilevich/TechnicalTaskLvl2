@@ -10,7 +10,7 @@ final class ShipsListViewModel {
     @Published var errorMessage: String?
 
     private let dataProvider: DataProvider
-    private var cancellables: Set<AnyCancellable> = []
+    var didSelectShip: ((String) -> Void)?
 
     // MARK: - Initializer
 

@@ -5,26 +5,50 @@ final class ShipDetailsViewModel {
 
     // MARK: - Properties
 
-    @Published var ship: Ship?
+    @Published var ship: Ship? {
+        didSet {
+            updateFormattedDetails()
+        }
+    }
+
+    @Published var formattedShipDetails: ShipDetailsFormatted?
     @Published var isOfflineMode: Bool = false
     @Published var errorMessage: String?
 
     private let dataProvider: DataProvider
-    private var cancellables: Set<AnyCancellable> = []
 
     // MARK: - Initializer
 
-    init(dataProvider: DataProvider) {
+    init(dataProvider: DataProvider, shipId: String) {
         self.dataProvider = dataProvider
+        Task {
+            await fetchShip(by: shipId)
+        }
     }
 
     // MARK: - Fetch Ship
 
-    func fetchShips(by id: String) async {
+    func fetchShip(by id: String) async {
         do {
             ship = try await dataProvider.fetchShip(by: id)
         } catch {
             errorMessage = "Failed to fetch details of ship."
         }
+    }
+
+    private func updateFormattedDetails() {
+        guard let ship = ship else {
+            formattedShipDetails = nil
+            return
+        }
+
+        formattedShipDetails = ShipDetailsFormatted(
+            name: "Ship name: \(ship.name)",
+            type: "Ship type: \(ship.type)",
+            builtYear: "Built year: \(ship.builtYear)",
+            weight: "Weight: \(ship.weight ?? 0) kg",
+            homePort: "Home port: \(ship.homePort ?? "N/A")",
+            roles: ship.roles ?? ["N/A"]
+        )
     }
 }

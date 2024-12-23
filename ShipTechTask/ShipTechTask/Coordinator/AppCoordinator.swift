@@ -37,14 +37,14 @@ final class AppCoordinator: Coordinator {
     private func showShipsList() {
         let shipsListViewModel = ShipsListViewModel(dataProvider: dataProvider)
         let shipsListViewController = ShipListViewController(viewModel: shipsListViewModel)
-//        shipsListViewModel.didSelectShip = { [weak self] ship in
-//            self?.showShipDetails(for: ship)
-//        }
+        shipsListViewModel.didSelectShip = { [weak self] id in
+            self?.showShipDetails(with: id)
+        }
         navigationController.pushViewController(shipsListViewController, animated: true)
     }
 
-    private func showShipDetails(for ship: Ship) {
-        let shipDetailsViewModel = ShipDetailsViewModel(dataProvider: dataProvider)
+    private func showShipDetails(with id: String) {
+        let shipDetailsViewModel = ShipDetailsViewModel(dataProvider: dataProvider, shipId: id)
         let shipDetailsViewController = ShipDetailsViewController(viewModel: shipDetailsViewModel)
         navigationController.present(shipDetailsViewController, animated: true, completion: nil)
     }

@@ -1,6 +1,12 @@
 import UIKit
 import Combine
 
+fileprivate enum Constants {
+    static let titleText = "Ships"
+    static let offlineBannerText = "No internet connection. You're in Offline mode"
+    static let offlineBannerHeight: CGFloat = 44.0
+}
+
 final class ShipListViewController: UIViewController {
 
     // MARK: - Properties
@@ -20,7 +26,7 @@ final class ShipListViewController: UIViewController {
 
     private let offlineBanner: UILabel = {
         let label = UILabel()
-        label.text = "No internet connection. You're in Offline mode"
+        label.text = Constants.offlineBannerText
         label.textAlignment = .center
         label.backgroundColor = .systemRed
         label.textColor = .white
@@ -61,7 +67,7 @@ final class ShipListViewController: UIViewController {
     // MARK: - UI Setup
 
     private func setupUI() {
-        title = "Ships"
+        title = Constants.titleText
         view.backgroundColor = .systemBackground
 
         setupLayout()
@@ -75,7 +81,7 @@ final class ShipListViewController: UIViewController {
             offlineBanner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             offlineBanner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             offlineBanner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            offlineBanner.heightAnchor.constraint(equalToConstant: 44),
+            offlineBanner.heightAnchor.constraint(equalToConstant: Constants.offlineBannerHeight),
 
             shipsTableView.topAnchor.constraint(equalTo: offlineBanner.bottomAnchor),
             shipsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -90,7 +96,7 @@ final class ShipListViewController: UIViewController {
         viewModel.$ships
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.shipsTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self?.shipsTableView.reloadData()
                 self?.refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
@@ -99,6 +105,7 @@ final class ShipListViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isOffline in
                 self?.offlineBanner.isHidden = !isOffline
+                // TODO: - the banner height is set to 0 here, if there is an Internet connection, here is the off-line Banner Height
             }
             .store(in: &cancellables)
     }
@@ -125,6 +132,12 @@ extension ShipListViewController: UITableViewDataSource, UITableViewDelegate {
         cell.configure(with: ship)
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let ship = viewModel.ships[indexPath.row]
+        
+        viewModel.didSelectShip?(ship.id)
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
