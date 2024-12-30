@@ -53,11 +53,6 @@
 			path = ShipTechTaskTests;
 			sourceTree = "<group>";
 		};
-		CE801F692D11A8D600188DBB /* ShipTechTaskUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ShipTechTaskUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +85,6 @@
 			children = (
 				CE801F452D11A8D500188DBB /* ShipTechTask */,
 				CE801F5F2D11A8D600188DBB /* ShipTechTaskTests */,
-				CE801F692D11A8D600188DBB /* ShipTechTaskUITests */,
 				CE801F442D11A8D500188DBB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -165,9 +159,6 @@
 			);
 			dependencies = (
 				CE801F682D11A8D600188DBB /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				CE801F692D11A8D600188DBB /* ShipTechTaskUITests */,
 			);
 			name = ShipTechTaskUITests;
 			packageProductDependencies = (
