@@ -2,12 +2,12 @@ import UIKit
 
 enum AppConfigurator {
     static func buildAppCoordinator(_ window: UIWindow) -> AppCoordinator {
-        let container = DependencyFactory(window: window)
+        let factory = ServicesFactory(window: window)
 
-        let authenticationProvider = container.makeAuthenticationProvider()
-        let dataProvider = container.makeDataProvider()
+        let authenticationProvider = factory.makeAuthenticationProvider()
+        let dataProvider = factory.makeDataProvider()
 
-        let appCoordinator = container.makeAppCoordinator(
+        let appCoordinator = factory.makeAppCoordinator(
             authenticationProvider: authenticationProvider,
             dataProvider: dataProvider
         )

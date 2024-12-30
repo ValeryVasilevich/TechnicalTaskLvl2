@@ -1,6 +1,6 @@
 import UIKit
 
-struct DependencyFactory {
+struct ServicesFactory {
     private let window: UIWindow
 
     init(window: UIWindow) {
