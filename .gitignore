@@ -1,9 +1,10 @@
 # User settings
 xcuserdata/
-
-# User-specific files
-*.xcuserstate
-*.xcbkptlist
+*.swp
+*~
+.DS_Store
+._*
+*.log
 
 # Build generated
 build/
@@ -12,20 +13,6 @@ DerivedData/
 # Obj-C/Swift specific
 *.hmap
 *.ipa
-
-# OSX Temp
-.DS_Store
-.LSOverride
-
-# OSX Thumbnails
-._*
-
-# Logs
-*.log
-
-# User-specific files
-*.swp
-*~
 
 # Archive files
 *.xcarchive
