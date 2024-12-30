@@ -49,7 +49,7 @@ final class ShipListViewController: UIViewController {
     }
 
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented. Please use init(viewModel:)")
+        nil
     }
 
     // MARK: - Lifecycle
