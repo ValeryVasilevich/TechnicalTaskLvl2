@@ -1,5 +1,13 @@
+import Foundation
+
 struct ShipsNetworkService {
-    private let shipsRequestFactory = ShipsRequestFactory()
+    let url: URL
+    let shipsRequestFactory: ShipsRequestFactory
+
+    init(baseURL: URL) {
+        self.url = baseURL
+        self.shipsRequestFactory = ShipsRequestFactory(baseURL: url)
+    }
 
     func fetchShips() async throws -> [Ship] {
         let request = try shipsRequestFactory.getShips()

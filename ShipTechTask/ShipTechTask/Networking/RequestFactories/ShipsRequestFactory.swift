@@ -1,8 +1,10 @@
 import Foundation
 
 struct ShipsRequestFactory: NetworkRequestFactory {
-    var baseURL: URL {
-        return URL(string: AppConstants.domain)!
+    let baseURL: URL
+
+    init(baseURL: URL) {
+        self.baseURL = baseURL
     }
 
     func getShips() throws -> URLRequest {

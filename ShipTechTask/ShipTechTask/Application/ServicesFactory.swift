@@ -14,7 +14,8 @@ struct ServicesFactory {
     }
 
     func makeNetworkService() -> ShipsNetworkService {
-        ShipsNetworkService()
+        let url = URL(string: AppConstants.domain)!
+        return ShipsNetworkService(baseURL: url)
     }
 
     func makeDataStore() -> LocalStorageManager {
