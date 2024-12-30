@@ -20,8 +20,8 @@ struct NetworkManager {
         do {
             let decodedObject = try decoder.decode(T.self, from: data)
             return decodedObject
-        } catch let decodingError {
-            throw NetworkError.decodingFailed(decodingError)
+        } catch {
+            throw NetworkError.decodingFailed(error)
         }
     }
 
