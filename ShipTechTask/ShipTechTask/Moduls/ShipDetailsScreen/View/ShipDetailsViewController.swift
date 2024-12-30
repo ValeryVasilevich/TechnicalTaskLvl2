@@ -147,8 +147,8 @@ final class ShipDetailsViewController: UIViewController {
         }
     }
 
-    private func loadShipImage(from imageUrlString: String?) {
-        guard let imageUrlString = imageUrlString, let url = URL(string: imageUrlString) else {
+    private func loadShipImage(from imagePath: String?) {
+        guard let imagePath = imagePath, let url = URL(string: imagePath) else {
             shipImageView.image = Constants.placeholderImage
             return
         }

@@ -98,7 +98,7 @@ final class ShipTableViewCell: UITableViewCell {
         shipNameLabel.text = ship.name
         shipTypeLabel.text = ship.type
         builtYearLabel.text = ship.builtYear
-        if let imageUrlString = ship.image, let url = URL(string: imageUrlString) {
+        if let imageURLString = ship.image, let url = URL(string: imageURLString) {
             shipImageView.loadImage(from: url)
         } else {
             shipImageView.image = Constants.placeholderImage
