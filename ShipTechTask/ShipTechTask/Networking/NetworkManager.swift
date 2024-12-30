@@ -9,14 +9,14 @@ struct NetworkManager {
         self.decoder = decoder
     }
 
-    func performRequest<T: Decodable>(_ request: URLRequest, decodeTo type: T.Type) async throws -> T {
+    func performRequest<T: Decodable>(_ request: URLRequest) async throws -> T {
         let (data, response) = try await session.data(for: request)
         try processResponse(response)
 
-        return try decodeData(data: data, type: T.self)
+        return try decodeData(data)
     }
 
-    private func decodeData<T: Decodable>(data: Data, type: T.Type) throws -> T {
+    private func decodeData<T: Decodable>(_ data: Data) throws -> T {
         do {
             let decodedObject = try decoder.decode(T.self, from: data)
             return decodedObject
