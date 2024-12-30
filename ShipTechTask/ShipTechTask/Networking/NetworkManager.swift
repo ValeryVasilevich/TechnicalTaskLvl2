@@ -3,6 +3,11 @@ import Foundation
 struct NetworkManager {
     static let shared = NetworkManager()
     private let session: URLSession = .shared
+    private let decoder: JSONDecoder
+
+    init(decoder: JSONDecoder = JSONDecoder()) {
+        self.decoder = decoder
+    }
 
     func performRequest<T: Decodable>(_ request: URLRequest, decodeTo type: T.Type) async throws -> T {
         let (data, response) = try await session.data(for: request)
@@ -13,7 +18,7 @@ struct NetworkManager {
 
     private func decodeData<T: Decodable>(data: Data, type: T.Type) throws -> T {
         do {
-            let decodedObject = try JSONDecoder().decode(T.self, from: data)
+            let decodedObject = try decoder.decode(T.self, from: data)
             return decodedObject
         } catch let decodingError {
             throw NetworkError.decodingFailed(decodingError)
