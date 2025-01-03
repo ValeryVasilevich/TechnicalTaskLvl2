@@ -14,7 +14,7 @@ protocol AuthenticationProvider {
     func logout()
 }
 
-final class DefaultAuthenticationProvider: AuthenticationProvider {
+final class LocalAuthenticationProvider: AuthenticationProvider {
     private let userDefaults = UserDefaults.standard
     private var authenticationStatusSubject = CurrentValueSubject<Bool, Never>(false)
 

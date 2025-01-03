@@ -10,7 +10,7 @@ struct ServicesFactory {
     // MARK: - Dependency Factories
 
     func makeAuthenticationProvider() -> AuthenticationProvider {
-        DefaultAuthenticationProvider()
+        LocalAuthenticationProvider()
     }
 
     func makeNetworkService() -> ShipsNetworkService {
