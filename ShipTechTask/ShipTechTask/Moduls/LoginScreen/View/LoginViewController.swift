@@ -135,17 +135,17 @@ final class LoginViewController: UIViewController {
             .assign(to: \.password, on: viewModel)
             .store(in: &cancellables)
 
-        viewModel.$isLoginButtonEnabled
-            .receive(on: DispatchQueue.main)
-            .assign(to: \.isEnabled, on: loginButton)
-            .store(in: &cancellables)
-
         loginButton.publisher
             .sink { [weak self] in self?.handleLogin() }
             .store(in: &cancellables)
 
         guestButton.publisher
             .sink { [weak self] in self?.viewModel.didLoginSucceeded?() }
+            .store(in: &cancellables)
+
+        viewModel.$isLoginButtonEnabled
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isEnabled, on: loginButton)
             .store(in: &cancellables)
 
         viewModel.$isLoading
