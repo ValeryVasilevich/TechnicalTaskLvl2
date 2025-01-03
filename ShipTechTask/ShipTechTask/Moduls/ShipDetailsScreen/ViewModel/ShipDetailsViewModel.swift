@@ -3,12 +3,6 @@ import Foundation
 
 fileprivate enum Constants {
     static let errorMessage = "Failed to fetch details of ship."
-    static let namePrefix = "Ship name: "
-    static let typePrefix = "Ship type: "
-    static let builtYearPrefix = "Built year: "
-    static let weightPrefix = "Weight:"
-    static let weightSuffix = "kg"
-    static let homePortPrefix = "Home port: "
 }
 
 final class ShipDetailsViewModel {
@@ -56,14 +50,6 @@ final class ShipDetailsViewModel {
             return
         }
 
-        formattedShipDetails = ShipDetailsFormatted(
-            name: "\(Constants.namePrefix)\(ship.name)",
-            type: "\(Constants.typePrefix)\(ship.type)",
-            image: ship.image ?? "",
-            builtYear: "\(Constants.builtYearPrefix)\(ship.builtYear)",
-            weight: "\(Constants.weightPrefix) \(ship.weight ?? 0) \(Constants.weightSuffix)",
-            homePort: "\(Constants.homePortPrefix)\(ship.homePort ?? "")",
-            roles: ship.roles ?? [""]
-        )
+        formattedShipDetails = ShipDetailsFormatted(from: ship)
     }
 }
